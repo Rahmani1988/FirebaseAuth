@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "483750260050",
+    "project_id": "fir-authsample-63173",
+    "storage_bucket": "fir-authsample-63173.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483750260050:android:b56de65ef0ad4284c19e8b",
+        "android_client_info": {
+          "package_name": "com.reza.firebaseauthsample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRwpuG_G8pxoeNz6varDGqHozpfkfCidY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
