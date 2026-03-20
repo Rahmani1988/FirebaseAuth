@@ -11,9 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun HomeScreen(onNavigateToEmailLinkAuth: () -> Unit, onNavigateToGoogleAuth: () -> Unit) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    onNavigateToEmailLinkAuth: () -> Unit,
+    onNavigateToGoogleAuth: () -> Unit
+) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

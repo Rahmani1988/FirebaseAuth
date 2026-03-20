@@ -1,7 +1,14 @@
 package com.reza.firebaseauthsample.ui.navigation
 
-sealed class Screen {
-    object Home : Screen()
-    object EmailLinkAuth : Screen()
-    object GoogleAuth : Screen()
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed class Screen : NavKey {
+    @Serializable
+    data object Home : Screen()
+    @Serializable
+    data object EmailLinkAuth : Screen()
+    @Serializable
+    data object GoogleAuth : Screen()
 }
