@@ -1,5 +1,6 @@
 package com.reza.firebaseauthsample.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.actionCodeSettings
 import com.google.firebase.auth.auth
+import androidx.core.content.edit
 
 @Composable
 fun EmailLinkAuthScreen(onBack: () -> Unit) {
@@ -60,16 +62,18 @@ fun EmailLinkAuthScreen(onBack: () -> Unit) {
         Button(
             onClick = {
                 isLoading = true
+
+                // save email in sharePref
+                val sharedPref = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                sharedPref.edit { putString("email_link_address", email) }
+
                 val actionCodeSettings = actionCodeSettings {
-                    // URL you want to redirect back to. The domain (www.example.com) for this
-                    // URL must be whitelisted in the Firebase Console.
-                    url = "https://www.example.com/finishSignUp?cartId=1234"
-                    // This must be true
+                    url = "https://fir-authsample-63173.firebaseapp.com"
                     handleCodeInApp = true
                     setAndroidPackageName(
                         "com.reza.firebaseauthsample",
-                        true, // installIfNotAvailable
-                        "24", // minimumVersion
+                        true,
+                        "24",
                     )
                 }
                 Firebase.auth.sendSignInLinkToEmail(email, actionCodeSettings)
