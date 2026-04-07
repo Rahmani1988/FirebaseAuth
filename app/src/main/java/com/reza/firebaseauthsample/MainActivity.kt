@@ -22,6 +22,12 @@ import com.reza.firebaseauthsample.ui.navigation.Screen
 import com.reza.firebaseauthsample.ui.theme.FirebaseAuthSamplesTheme
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        const val AUTH_PREFS = "auth_prefs"
+        const val EMAIL_LINK_KEY = "email_link_key"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 1. Check if the intent contains a Firebase Auth link
@@ -29,8 +35,8 @@ class MainActivity : ComponentActivity() {
         if (intentData != null && Firebase.auth.isSignInWithEmailLink(intentData)) {
 
             // 2. Retrieve the email we saved earlier
-            val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-            val email = sharedPref.getString("email_link_address", null)
+            val sharedPref = getSharedPreferences(AUTH_PREFS, Context.MODE_PRIVATE)
+            val email = sharedPref.getString(EMAIL_LINK_KEY, null)
 
             // 3. Security Fallback: If the user opened the link on a DIFFERENT device,
             // the SharedPreferences will be empty. We must ask them for their email again.
