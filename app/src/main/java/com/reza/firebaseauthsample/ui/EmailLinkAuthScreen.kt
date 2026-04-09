@@ -92,15 +92,15 @@ fun EmailLinkAuthScreen(onBack: () -> Unit) {
                     }
                     Firebase.auth.sendSignInLinkToEmail(email, actionCodeSettings)
                         .addOnCompleteListener { task ->
-                            isLoading = false
                             if (task.isSuccessful) {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar("Email sent successfully.")
+                                    snackbarHostState.showSnackbar("Email sent successfully. Please check your inbox.")
                                 }
                                 Log.d("EmailLinkAuthScreen_TAG", "Email sent.")
                             } else {
                                 Log.d("EmailLinkAuthScreen_TAG", "Email not sent.")
                             }
+                            isLoading = false
                         }
                 },
                 modifier = Modifier.fillMaxWidth(),
