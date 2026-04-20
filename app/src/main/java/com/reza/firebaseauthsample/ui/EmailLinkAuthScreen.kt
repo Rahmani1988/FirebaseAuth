@@ -45,6 +45,37 @@ fun EmailLinkAuthScreen(onBack: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    fun sendSignInLink() {
+        isLoading = true
+
+        val sharedPref =
+            context.getSharedPreferences(MainActivity.AUTH_PREFS, Context.MODE_PRIVATE)
+        sharedPref.edit { putString(MainActivity.EMAIL_LINK_KEY, email) }
+
+        val actionCodeSettings = actionCodeSettings {
+            url = "https://fir-authsample-63173.firebaseapp.com"
+            handleCodeInApp = true
+            setAndroidPackageName(
+                "com.reza.firebaseauthsample",
+                true,
+                "24",
+            )
+        }
+
+        Firebase.auth.sendSignInLinkToEmail(email, actionCodeSettings)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Email sent successfully. Please check your inbox.")
+                    }
+                    Log.d("EmailLinkAuthScreen_TAG", "Email sent.")
+                } else {
+                    Log.d("EmailLinkAuthScreen_TAG", "Email not sent.")
+                }
+                isLoading = false
+            }
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -73,36 +104,7 @@ fun EmailLinkAuthScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = {
-                    isLoading = true
-
-                    // save email in sharePref
-                    val sharedPref =
-                        context.getSharedPreferences(MainActivity.AUTH_PREFS, Context.MODE_PRIVATE)
-                    sharedPref.edit { putString(MainActivity.EMAIL_LINK_KEY, email) }
-
-                    val actionCodeSettings = actionCodeSettings {
-                        url = "https://fir-authsample-63173.firebaseapp.com"
-                        handleCodeInApp = true
-                        setAndroidPackageName(
-                            "com.reza.firebaseauthsample",
-                            true,
-                            "24",
-                        )
-                    }
-                    Firebase.auth.sendSignInLinkToEmail(email, actionCodeSettings)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar("Email sent successfully. Please check your inbox.")
-                                }
-                                Log.d("EmailLinkAuthScreen_TAG", "Email sent.")
-                            } else {
-                                Log.d("EmailLinkAuthScreen_TAG", "Email not sent.")
-                            }
-                            isLoading = false
-                        }
-                },
+                onClick = { sendSignInLink() },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = email.isNotEmpty() && !isLoading
             ) {

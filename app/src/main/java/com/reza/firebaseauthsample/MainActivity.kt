@@ -26,39 +26,34 @@ class MainActivity : ComponentActivity() {
     companion object {
         const val AUTH_PREFS = "auth_prefs"
         const val EMAIL_LINK_KEY = "email_link_key"
+        const val TAG = "MainActivity"
+    }
+
+    private fun handleEmailLinkSignIn() {
+        val auth = Firebase.auth
+        val emailLink = intent.data?.toString() ?: return
+
+        if (auth.isSignInWithEmailLink(emailLink)) {
+            val sharedPref = getSharedPreferences(AUTH_PREFS, MODE_PRIVATE)
+            sharedPref.getString(EMAIL_LINK_KEY, null)?.let {
+                auth.signInWithEmailLink(it, emailLink)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d(TAG, "Successfully signed in with email link!")
+                            val result = task.result
+                            // You can access the new user via result.getUser()
+                        } else {
+                            Log.e(TAG, "Error signing in with email link", task.exception)
+                        }
+                    }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 1. Check if the intent contains a Firebase Auth link
-        val intentData = intent.data?.toString()
-        if (intentData != null && Firebase.auth.isSignInWithEmailLink(intentData)) {
-
-            // 2. Retrieve the email we saved earlier
-            val sharedPref = getSharedPreferences(AUTH_PREFS, Context.MODE_PRIVATE)
-            val email = sharedPref.getString(EMAIL_LINK_KEY, null)
-
-            // 3. Security Fallback: If the user opened the link on a DIFFERENT device,
-            // the SharedPreferences will be empty. We must ask them for their email again.
-            if (email == null) {
-                // Logic to show a dialog asking: "Please confirm your email to finish signing in"
-                // For now, let's assume it's the same device
-                return
-            }
-
-            // 4. Complete the sign-in
-            Firebase.auth.signInWithEmailLink(email, intentData)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("AUTH", "Successfully signed in!")
-                        val user = task.result?.user
-                        // Navigate to Home or Update State
-                    } else {
-                        Log.e("AUTH", "Error signing in", task.exception)
-                    }
-                }
-        }
-
+        handleEmailLinkSignIn()
+        
         enableEdgeToEdge()
         setContent {
             FirebaseAuthSamplesTheme {
