@@ -30,7 +30,6 @@
 
                 <data
                     android:host="fir-authsample-63173.firebaseapp.com"
-                    android:pathPrefix="/__/auth/links"
                     android:scheme="https" />
             </intent-filter>
         </activity>
