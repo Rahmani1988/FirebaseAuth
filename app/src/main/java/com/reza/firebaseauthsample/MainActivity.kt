@@ -18,6 +18,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 import com.reza.firebaseauthsample.ui.EmailLinkAuthScreen
+import com.reza.firebaseauthsample.ui.GoogleAuthScreen
 import com.reza.firebaseauthsample.ui.HomeScreen
 import com.reza.firebaseauthsample.ui.navigation.Screen
 import com.reza.firebaseauthsample.ui.theme.FirebaseAuthSamplesTheme
@@ -105,8 +106,7 @@ class MainActivity : ComponentActivity() {
                                 EmailLinkAuthScreen(onBack = { backStack.removeAt(backStack.lastIndex) })
                             }
                             entry<Screen.GoogleAuth> {
-                                // todo implement
-                                Text("Google Auth Screen")
+                                GoogleAuthScreen(onBack = { backStack.removeAt(backStack.lastIndex) })
                             }
                         }
                     )
