@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FirebaseAuthSamples</string>
+    <string name="default_web_client_id">483750260050-u1pcjnd67d9ij6tffntj6fd1qa007fvv.apps.googleusercontent.com</string>
 </resources>
