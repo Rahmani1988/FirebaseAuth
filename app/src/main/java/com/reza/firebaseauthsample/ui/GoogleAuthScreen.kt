@@ -29,11 +29,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+import com.google.firebase.Firebase
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
 import com.reza.firebaseauthsample.R
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun GoogleAuthScreen(onBack: () -> Unit) {
@@ -41,10 +51,6 @@ fun GoogleAuthScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
-
-    fun handleGoogleSignIn() {
-        TODO("to be completed")
-    }
 
     Scaffold { padding ->
         Column(
@@ -59,7 +65,25 @@ fun GoogleAuthScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { handleGoogleSignIn() },
+                onClick = {
+                    coroutineScope.launch {
+                        launchCredManButtonUI(
+                            context = context,
+                            onRequestResult = { credential ->
+                                launch {
+                                    if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                                        val googleIdTokenCredential =
+                                            GoogleIdTokenCredential.createFrom(credential.data)
+                                            val authResult = firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
+                                        // todo handle auth result
+                                    } else {
+                                        Log.e("ERROR_TAG", "UNEXPECTED_CREDENTIAL")
+                                    }
+                                }
+                            }
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp),
@@ -109,4 +133,9 @@ private suspend fun launchCredManButtonUI(
     } catch (e: GetCredentialException) {
         Log.d("ERROR_TAG", e.message.orEmpty())
     }
+}
+
+private suspend fun firebaseAuthWithGoogle(idToken: String): AuthResult {
+    val credential = GoogleAuthProvider.getCredential(idToken, null)
+    return Firebase.auth.signInWithCredential(credential).await()
 }
