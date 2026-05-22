@@ -72,10 +72,20 @@ fun GoogleAuthScreen(onBack: () -> Unit) {
                             onRequestResult = { credential ->
                                 launch {
                                     if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                                        val googleIdTokenCredential =
-                                            GoogleIdTokenCredential.createFrom(credential.data)
+                                        val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                                        try {
                                             val authResult = firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-                                        // todo handle auth result
+                                            val isNewUser = authResult.additionalUserInfo?.isNewUser == true
+                                            if (isNewUser) {
+                                                Toast.makeText(context, "Welcome!", Toast.LENGTH_SHORT).show()
+                                            }
+                                            Log.d("AUTH_TAG", "signInWithCredential:success")
+                                            val user = authResult.user
+                                            Log.d("AUTH_TAG", "user:${user?.email}")
+                                            onBack()
+                                        } catch (e: Exception) {
+                                            Log.w("AUTH_TAG", "signInWithCredential:failure", e)
+                                        }
                                     } else {
                                         Log.e("ERROR_TAG", "UNEXPECTED_CREDENTIAL")
                                     }
